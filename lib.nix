@@ -148,7 +148,12 @@ rec {
             ];
           };
           conflicts = [ "unmount.target" ];
-          after = [ "systemd-tmpfiles-setup.service" ];
+          after =
+            if forInitrd then [
+              "systemd-tmpfiles-setup-sysroot.service"
+            ] else [
+              "systemd-tmpfiles-setup.service"
+            ];
           wantedBy =
             if forInitrd then [
               "initrd-preservation.target"
@@ -187,7 +192,12 @@ rec {
             ];
           };
           conflicts = [ "unmount.target" ];
-          after = [ "systemd-tmpfiles-setup.service" ];
+          after =
+            if forInitrd then [
+              "systemd-tmpfiles-setup-sysroot.service"
+            ] else [
+              "systemd-tmpfiles-setup.service"
+            ];
           wantedBy =
             if forInitrd then [
               "initrd-preservation.target"
