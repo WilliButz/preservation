@@ -59,6 +59,7 @@ in
           mountpoint = "${pkgs.util-linux}/bin/mountpoint";
         };
       };
+      networking.useNetworkd = true;
 
       users.users = {
         alice = {
