@@ -58,6 +58,7 @@ in
             files = [
               { file = ".config/foo"; mode = "0600"; }
               "bar"
+              { file = ".symlinks/baz"; how = "symlink"; }
             ];
             directories = [
               "unshaved_yaks"
@@ -98,15 +99,25 @@ in
             machine.succeed(f"mountpoint {path}")
 
             # check permissions and ownership
-            actual = machine.succeed(f"stat -c '0%a %U %G' {path}").strip()
+            actual = machine.succeed(f"stat -c '0%a %U %G' {path} | tee /dev/stderr").strip()
             expected = "{} {} {}".format(config["mode"],config["user"],config["group"])
             assert actual == expected,f"unexpected file attributes\nexpected: {expected}\nactual: {actual}"
 
           case "symlink":
+            # check that symlink was created
             machine.succeed(f"test -L {path}")
 
           case x:
             raise Exception(f"Unknown case: {x}")
+
+        if config.get("configureParent") == True:
+          parent = os.path.dirname(path)
+          config = config["parent"]
+          # check permissions and ownership of parent directory
+          actual = machine.succeed(f"stat -c '0%a %U %G' {parent} | tee /dev/stderr").strip()
+          expected = "{} {} {}".format(config["mode"],config["user"],config["group"])
+          assert actual == expected,f"unexpected file attributes\nexpected: {expected}\nactual: {actual}"
+
 
       machine.start(allow_reboot=True)
       machine.wait_for_unit("default.target")
