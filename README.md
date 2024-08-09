@@ -11,6 +11,8 @@ meant to be a drop-in replacement.
 
 Check out [the test](tests/basic.nix) for a usage example 👀
 
+Depends on https://github.com/NixOS/nixpkgs/pull/307528
+
 ## How does it compare to impermanence
 
 * Preservation does not attempt to be a very generic solution, it tries to fill a specific niche.
