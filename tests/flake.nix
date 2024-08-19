@@ -2,8 +2,8 @@
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
 
-    # depends on https://github.com/NixOS/nixpkgs/pull/307528
-    nixpkgs.url = "github:willibutz/nixpkgs/systemd-initrd/tmpfiles-settings";
+    # depends on https://github.com/NixOS/nixpkgs/pull/307528 (merged)
+    nixpkgs.url = "github:nixos/nixpkgs";
   };
 
   outputs = inputs:

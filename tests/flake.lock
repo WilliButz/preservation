@@ -20,16 +20,15 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1723546941,
-        "narHash": "sha256-44Gnw3x6JYp+uejKV0fqm+6leNl9Iiavt/DLnvpl9Qs=",
-        "owner": "willibutz",
+        "lastModified": 1724068500,
+        "narHash": "sha256-iwRk28ecrqkJFbhjs6V6hMEg+gTCDLIhmz+c3Mv2a6U=",
+        "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "8dd369f524411d971e03d8bc5e1abcb73c55f3db",
+        "rev": "34a8b3aa250af1e447651347eaff2af05783b5ad",
         "type": "github"
       },
       "original": {
-        "owner": "willibutz",
-        "ref": "systemd-initrd/tmpfiles-settings",
+        "owner": "nixos",
         "repo": "nixpkgs",
         "type": "github"
       }

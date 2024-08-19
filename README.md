@@ -11,7 +11,7 @@ meant to be a drop-in replacement.
 
 Check out [the test](tests/basic.nix) for a usage example 👀
 
-Depends on https://github.com/NixOS/nixpkgs/pull/307528
+Depends on https://github.com/NixOS/nixpkgs/pull/307528 (merged)
 
 ## How does it compare to impermanence
 
