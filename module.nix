@@ -15,7 +15,7 @@ let
       name = lib.mkOption {
         type = lib.types.str;
         description = ''
-          The name of the mount option.
+          Specify the name of the mount option.
         '';
         example = "bind";
       };
@@ -23,20 +23,30 @@ let
         type = with lib.types; nullOr str;
         default = null;
         description = ''
-          The optional value for the mount option.
+          Optionally specify a value for the mount option.
         '';
       };
     };
   };
 
   directoryPath =
-    { name, defaultOwner, ... }:
+    attrs@{ defaultOwner, ... }:
     {
       options = {
         directory = lib.mkOption {
           type = lib.types.str;
           description = ''
             Specify the path to the directory that should be preserved.
+          '';
+        };
+        how = lib.mkOption {
+          type = lib.types.enum [
+            "bindmount"
+            "symlink"
+          ];
+          default = "bindmount";
+          description = ''
+            Specify how this directory should be preserved.
           '';
         };
         user = lib.mkOption {
@@ -61,6 +71,47 @@ let
             See the section `Mode` in {manpage}`tmpfiles.d(5)` for more information.
           '';
         };
+        configureParent = lib.mkOption {
+          type = lib.types.bool;
+          default = attrs.config.how == "symlink" && attrs.config.user != "root";
+          description = ''
+            Specify whether the parent directory of this directory shall be configured with
+            custom ownership and permissions.
+
+            By default, missing parent directories are always created with ownership
+            `root:root` and mode `0755`, as described in {manpage}`tmpfiles.d(5)`.
+
+            Ownership and mode may be configured through the options
+            {option}`parent.user`,
+            {option}`parent.group`,
+            {option}`parent.mode`.
+
+            Defaults to `true` when {option}`how` is set to `symlink` and
+            {option}`user` is not `root`.
+          '';
+        };
+        parent.user = lib.mkOption {
+          type = lib.types.str;
+          default = defaultOwner;
+          description = ''
+            Specify the user that owns the parent directory of this file.
+          '';
+        };
+        parent.group = lib.mkOption {
+          type = lib.types.str;
+          default = config.users.users.${defaultOwner}.group;
+          description = ''
+            Specify the group that owns the parent directory of this file.
+          '';
+        };
+        parent.mode = lib.mkOption {
+          type = lib.types.str;
+          default = "0755";
+          description = ''
+            Specify the access mode of the parent directory of this file.
+            See the section `Mode` in {manpage}`tmpfiles.d(5)` for more information.
+          '';
+        };
         mountOptions = lib.mkOption {
           type = with lib.types; listOf (coercedTo str (n: { name = n; }) mountOption);
           default = [
@@ -72,14 +123,14 @@ let
             These options are only used when {option}`how` is set to `bindmount`.
           '';
         };
-        how = lib.mkOption {
-          type = lib.types.enum [
-            "bindmount"
-            "symlink"
-          ];
-          default = "bindmount";
+        createLinkTarget = lib.mkOption {
+          type = lib.types.bool;
+          default = false;
           description = ''
-            Specify how this directory should be preserved.
+            Only used when {option}`how` is set to `symlink`.
+
+            Specify whether to create an empty directory with the specified ownership
+            and permissions as target of the symlink.
           '';
         };
         inInitrd = lib.mkOption {
@@ -102,15 +153,7 @@ let
     };
 
   filePath =
-    let
-      globalConfig = config;
-    in
-    {
-      config,
-      name,
-      defaultOwner,
-      ...
-    }:
+    attrs@{ defaultOwner, ... }:
     {
       options = {
         file = lib.mkOption {
@@ -145,7 +188,7 @@ let
         };
         group = lib.mkOption {
           type = lib.types.str;
-          default = globalConfig.users.users.${defaultOwner}.group;
+          default = config.users.users.${defaultOwner}.group;
           description = ''
             Specify the group that owns the file.
           '';
@@ -160,7 +203,7 @@ let
         };
         configureParent = lib.mkOption {
           type = lib.types.bool;
-          default = config.how == "symlink" && config.user != "root";
+          default = attrs.config.how == "symlink" && attrs.config.user != "root";
           description = ''
             Specify whether the parent directory of this file shall be configured with
             custom ownership and permissions.
@@ -186,7 +229,7 @@ let
         };
         parent.group = lib.mkOption {
           type = lib.types.str;
-          default = globalConfig.users.users.${defaultOwner}.group;
+          default = config.users.users.${attrs.defaultOwner}.group;
           description = ''
             Specify the group that owns the parent directory of this file.
           '';
@@ -240,7 +283,7 @@ let
     };
 
   userModule =
-    { name, ... }@attrs:
+    attrs@{ name, ... }:
     {
       options = {
         username = lib.mkOption {
@@ -302,7 +345,7 @@ let
     };
 
   preserveAtSubmodule =
-    { name, ... }:
+    attrs@{ name, ... }:
     {
       options = {
         persistentStoragePath = lib.mkOption {

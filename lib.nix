@@ -78,63 +78,123 @@ rec {
 
       prefix = if forInitrd then "/sysroot" else "/";
 
-      mountedDirRules = map (dirConfig: {
-        # directory on persistent storage
-        "${concatPaths [
-          prefix
-          stateConfig.persistentStoragePath
-          dirConfig.directory
-        ]}".d = {
-          inherit (dirConfig) user group mode;
-        };
-        # directory on volatile storage
-        "${concatPaths [
-          prefix
-          dirConfig.directory
-        ]}".d = {
-          inherit (dirConfig) user group mode;
-        };
-      }) mountedDirectories;
-
-      mountedFileRules = map (fileConfig: {
-        # file on persistent storage
-        "${concatPaths [
-          prefix
-          stateConfig.persistentStoragePath
-          fileConfig.file
-        ]}".f = {
-          inherit (fileConfig) user group mode;
-        };
-        # file on volatile storage
-        "${concatPaths [
-          prefix
-          fileConfig.file
-        ]}".f = {
-          inherit (fileConfig) user group mode;
-        };
-      }) mountedFiles;
-
-      symlinkedDirRules = map (dirConfig: {
-        # directory on persistent storage
-        "${concatPaths [
-          prefix
-          stateConfig.persistentStoragePath
-          dirConfig.directory
-        ]}".d = {
-          inherit (dirConfig) user group mode;
-        };
-        # symlink on volatile storage
-        "${concatPaths [
-          prefix
-          dirConfig.directory
-        ]}".L = {
-          inherit (dirConfig) user group mode;
-          argument = concatPaths [
+      mountedDirRules = map (
+        dirConfig:
+        let
+          persistentDirPath = concatPaths [
+            prefix
             stateConfig.persistentStoragePath
             dirConfig.directory
           ];
-        };
-      }) symlinkedDirectories;
+          volatileDirPath = concatPaths [
+            prefix
+            dirConfig.directory
+          ];
+        in
+        {
+          # directory on persistent storage
+          "${persistentDirPath}".d = {
+            inherit (dirConfig) user group mode;
+          };
+          # directory on volatile storage
+          "${volatileDirPath}".d = {
+            inherit (dirConfig) user group mode;
+          };
+        }
+        // lib.optionalAttrs dirConfig.configureParent {
+          # parent directory of directory on persistent storage
+          "${parentDirectory persistentDirPath}".d = {
+            inherit (dirConfig.parent) user group mode;
+          };
+          # parent directory of symlink on volatile storage
+          "${parentDirectory volatileDirPath}".d = {
+            inherit (dirConfig.parent) user group mode;
+          };
+        }
+      ) mountedDirectories;
+
+      mountedFileRules = map (
+        fileConfig:
+        let
+          persistentFilePath = concatPaths [
+            prefix
+            stateConfig.persistentStoragePath
+            fileConfig.file
+          ];
+          volatileFilePath = concatPaths [
+            prefix
+            fileConfig.file
+          ];
+        in
+        {
+          # file on persistent storage
+          "${concatPaths [
+            prefix
+            stateConfig.persistentStoragePath
+            fileConfig.file
+          ]}".f = {
+            inherit (fileConfig) user group mode;
+          };
+          # file on volatile storage
+          "${concatPaths [
+            prefix
+            fileConfig.file
+          ]}".f = {
+            inherit (fileConfig) user group mode;
+          };
+        }
+        // lib.optionalAttrs fileConfig.configureParent {
+          # parent directory of file on persistent storage
+          "${parentDirectory persistentFilePath}".d = {
+            inherit (fileConfig.parent) user group mode;
+          };
+          # parent directory of symlink on volatile storage
+          "${parentDirectory volatileFilePath}".d = {
+            inherit (fileConfig.parent) user group mode;
+          };
+        }
+      ) mountedFiles;
+
+      symlinkedDirRules = map (
+        dirConfig:
+        let
+          persistentDirPath = concatPaths [
+            prefix
+            stateConfig.persistentStoragePath
+            dirConfig.directory
+          ];
+          volatileDirPath = concatPaths [
+            prefix
+            dirConfig.directory
+          ];
+        in
+        {
+          # symlink on volatile storage
+          "${volatileDirPath}".L = {
+            inherit (dirConfig) user group mode;
+            argument = concatPaths [
+              stateConfig.persistentStoragePath
+              dirConfig.directory
+            ];
+          };
+        }
+        // lib.optionalAttrs dirConfig.createLinkTarget {
+          # directory on persistent storage
+          "${persistentDirPath}".d = {
+            inherit (dirConfig) user group mode;
+          };
+        }
+        // lib.optionalAttrs dirConfig.configureParent {
+          # parent directory of directory on persistent storage
+          "${parentDirectory persistentDirPath}".d = {
+            inherit (dirConfig.parent) user group mode;
+          };
+          # parent directory of symlink on volatile storage
+          "${parentDirectory volatileDirPath}".d = {
+            inherit (dirConfig.parent) user group mode;
+          };
+        }
+      ) symlinkedDirectories;
 
       symlinkedFileRules = map (
         fileConfig:
