@@ -1,6 +1,4 @@
-* currently this is designed to work from first boot, still needs some testing
-  to see if this behaves correctly when enabled on an existing/running system.
-  especially when migrating from impermanence to Preservation
+* migration from impermanence works fine, but needs some specific documentation
 
 * add support for tmpfiles' modifiers?
 
