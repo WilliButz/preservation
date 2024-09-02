@@ -1,0 +1,28 @@
+name: Options
+on:
+  push:
+    branches:
+      - docs
+      - main
+jobs:
+  render:
+    name: Render
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@ab6bcb2d5af0e904d04aea750e2089e9dc4cbfdd
+        with:
+          diagnostic-endpoint: ""
+
+      - uses: DeterminateSystems/magic-nix-cache-action@b46e247b898aa56e6d2d2e728dc6df6c84fdb738
+        with:
+          diagnostic-endpoint: ""
+
+      - run: nix build -L ./docs#packages.x86_64-linux.docs
+
+      - uses: peaceiris/actions-gh-pages@v4
+        with:
+          deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          publish_dir: ./result

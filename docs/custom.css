@@ -1,0 +1,4 @@
+:root {
+  /* accommodate long option paths on big screens */
+  --content-max-width: 1000px;
+}

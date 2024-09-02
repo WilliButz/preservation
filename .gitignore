@@ -3,3 +3,4 @@
 result*
 /.direnv
 /tests/.nixos-test-history
+*.html
