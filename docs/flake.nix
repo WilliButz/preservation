@@ -48,6 +48,7 @@
           nativeBuildInputs = [ pkgs.mdbook ];
           patchPhase = ''
             cat ${inputs.self.packages.x86_64-linux.optionsManualMD} > docs/src/configuration-options.md
+            cp README.md docs/src
           '';
           buildPhase = ''
             cd docs

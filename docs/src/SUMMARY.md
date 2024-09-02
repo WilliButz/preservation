@@ -1,6 +1,6 @@
 # Summary
 
-[Preservation](../../README.md)
+[Preservation](./README.md)
 - [Configuration Options](./configuration-options.md)
 - [Examples](./examples.md)
 - [Impermanence](./impermanence.md)
