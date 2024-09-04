@@ -107,13 +107,12 @@ let
         };
         mountOptions = lib.mkOption {
           type = with lib.types; listOf (coercedTo str (n: { name = n; }) mountOption);
-          default = [
-            "bind"
-            "X-fstrim.notrim" # see fstrim(8)
-          ];
           description = ''
             Specify a list of mount options that should be used for this directory.
             These options are only used when {option}`how` is set to `bindmount`.
+            By default, `bind` and `X-fstrim.notrim` are added,
+            use `mkForce` to override these if needed.
+            See also {manpage}`fstrim(8)`.
           '';
         };
         createLinkTarget = lib.mkOption {
@@ -142,6 +141,13 @@ let
             :::
           '';
         };
+      };
+
+      config = {
+        mountOptions = [
+          "bind"
+          "X-fstrim.notrim" # see fstrim(8)
+        ];
       };
     };
 
@@ -239,10 +245,11 @@ let
         };
         mountOptions = lib.mkOption {
           type = with lib.types; listOf (coercedTo str (o: { name = o; }) mountOption);
-          default = [ "bind" ];
           description = ''
             Specify a list of mount options that should be used for this file.
             These options are only used when {option}`how` is set to `bindmount`.
+            By default, `bind` is added,
+            use `mkForce` to override this if needed.
           '';
         };
         createLinkTarget = lib.mkOption {
@@ -274,6 +281,12 @@ let
             :::
           '';
         };
+      };
+
+      config = {
+        mountOptions = [
+          "bind"
+        ];
       };
     };
 
