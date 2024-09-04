@@ -14,9 +14,13 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@ab6bcb2d5af0e904d04aea750e2089e9dc4cbfdd
         with:
           diagnostic-endpoint: ""
+          source-url: "https://install.lix.systems/lix/lix-installer-x86_64-linux"
 
       - uses: DeterminateSystems/magic-nix-cache-action@b46e247b898aa56e6d2d2e728dc6df6c84fdb738
         with:
           diagnostic-endpoint: ""
 
-      - run: nix flake check -L ./tests
+      - run: nix flake check --log-format raw-with-logs -L ./tests
+
+env:
+  FORCE_COLOR: 1
