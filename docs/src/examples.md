@@ -96,7 +96,7 @@ See [Configuration Options](./configuration-options.md) for all available option
             ".histfile"
           ];
         };
-        users.root = {
+        root = {
           # specify user home when it is not `/home/${user}`
           home = "/root";
           directories = [
