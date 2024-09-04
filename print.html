@@ -351,15 +351,12 @@ string</p>
 </ul>
 <h2 id="preservationpreserveatnamedirectoriesmountoptions"><a class="header" href="#preservationpreserveatnamedirectoriesmountoptions">preservation.preserveAt.&lt;name&gt;.directories.*.mountOptions</a></h2>
 <p>Specify a list of mount options that should be used for this directory.
-These options are only used when <code>how</code> is set to <code>bindmount</code>.</p>
+These options are only used when <code>how</code> is set to <code>bindmount</code>.
+By default, <code>bind</code> and <code>X-fstrim.notrim</code> are added,
+use <code>mkForce</code> to override these if needed.
+See also <code>fstrim(8)</code>.</p>
 <p><em>Type:</em>
 list of ((submodule) or string convertible to it)</p>
-<p><em>Default:</em></p>
-<pre><code>[
-  "bind"
-  "X-fstrim.notrim"
-]
-</code></pre>
 <p><em>Declared by:</em></p>
 <ul>
 <li><a href="https://github.com/willibutz/preservation/blob/main/options.nix">options.nix</a></li>
@@ -546,14 +543,11 @@ string</p>
 </ul>
 <h2 id="preservationpreserveatnamefilesmountoptions"><a class="header" href="#preservationpreserveatnamefilesmountoptions">preservation.preserveAt.&lt;name&gt;.files.*.mountOptions</a></h2>
 <p>Specify a list of mount options that should be used for this file.
-These options are only used when <code>how</code> is set to <code>bindmount</code>.</p>
+These options are only used when <code>how</code> is set to <code>bindmount</code>.
+By default, <code>bind</code> is added,
+use <code>mkForce</code> to override this if needed.</p>
 <p><em>Type:</em>
 list of ((submodule) or string convertible to it)</p>
-<p><em>Default:</em></p>
-<pre><code>[
-  "bind"
-]
-</code></pre>
 <p><em>Declared by:</em></p>
 <ul>
 <li><a href="https://github.com/willibutz/preservation/blob/main/options.nix">options.nix</a></li>
@@ -758,15 +752,12 @@ string</p>
 </ul>
 <h2 id="preservationpreserveatnameusersnamedirectoriesmountoptions"><a class="header" href="#preservationpreserveatnameusersnamedirectoriesmountoptions">preservation.preserveAt.&lt;name&gt;.users.&lt;name&gt;.directories.*.mountOptions</a></h2>
 <p>Specify a list of mount options that should be used for this directory.
-These options are only used when <code>how</code> is set to <code>bindmount</code>.</p>
+These options are only used when <code>how</code> is set to <code>bindmount</code>.
+By default, <code>bind</code> and <code>X-fstrim.notrim</code> are added,
+use <code>mkForce</code> to override these if needed.
+See also <code>fstrim(8)</code>.</p>
 <p><em>Type:</em>
 list of ((submodule) or string convertible to it)</p>
-<p><em>Default:</em></p>
-<pre><code>[
-  "bind"
-  "X-fstrim.notrim"
-]
-</code></pre>
 <p><em>Declared by:</em></p>
 <ul>
 <li><a href="https://github.com/willibutz/preservation/blob/main/options.nix">options.nix</a></li>
@@ -950,14 +941,11 @@ string</p>
 </ul>
 <h2 id="preservationpreserveatnameusersnamefilesmountoptions"><a class="header" href="#preservationpreserveatnameusersnamefilesmountoptions">preservation.preserveAt.&lt;name&gt;.users.&lt;name&gt;.files.*.mountOptions</a></h2>
 <p>Specify a list of mount options that should be used for this file.
-These options are only used when <code>how</code> is set to <code>bindmount</code>.</p>
+These options are only used when <code>how</code> is set to <code>bindmount</code>.
+By default, <code>bind</code> is added,
+use <code>mkForce</code> to override this if needed.</p>
 <p><em>Type:</em>
 list of ((submodule) or string convertible to it)</p>
-<p><em>Default:</em></p>
-<pre><code>[
-  "bind"
-]
-</code></pre>
 <p><em>Declared by:</em></p>
 <ul>
 <li><a href="https://github.com/willibutz/preservation/blob/main/options.nix">options.nix</a></li>
