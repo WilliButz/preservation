@@ -247,8 +247,12 @@ rec {
     let
       allDirectories = getAllDirectories stateConfig;
       allFiles = getAllFiles stateConfig;
-      mountedDirectories = onlyBindMounts forInitrd allDirectories;
-      mountedFiles = onlyBindMounts forInitrd allFiles;
+      mountedDirectories =
+        onlyBindMounts forInitrd allDirectories
+        ++ lib.optionals (!forInitrd) (onlyBindMounts true allDirectories);
+      mountedFiles =
+        onlyBindMounts forInitrd allFiles
+        ++ lib.optionals (!forInitrd) (onlyBindMounts true allFiles);
 
       prefix = if forInitrd then "/sysroot" else "/";
 
