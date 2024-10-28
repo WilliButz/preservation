@@ -311,7 +311,7 @@ rec {
             fileConfig.file
           ];
         };
-        conflicts = [ "unmount.target" ];
+        conflicts = [ "umount.target" ];
         after =
           if forInitrd then
             [ "systemd-tmpfiles-setup-sysroot.service" ]
