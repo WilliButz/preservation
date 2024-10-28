@@ -20,6 +20,7 @@ in
         preserveAt."/state" = {
           directories = [
             "/var/lib/someservice"
+            "/var/log"
           ];
           files = [
             { file = "/etc/wpa_supplicant.conf"; how = "symlink"; }

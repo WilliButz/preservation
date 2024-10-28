@@ -269,27 +269,21 @@ rec {
           stateConfig.persistentStoragePath
           directoryConfig.directory
         ];
-        unitConfig = {
-          DefaultDependencies = "no";
-          ConditionPathExists = concatPaths [
-            prefix
-            stateConfig.persistentStoragePath
-            directoryConfig.directory
-          ];
-          ConditionPathIsDirectory = concatPaths [
-            prefix
-            stateConfig.persistentStoragePath
-            directoryConfig.directory
-          ];
-        };
-        conflicts = [ "unmount.target" ];
-        after =
-          if forInitrd then
-            [ "systemd-tmpfiles-setup-sysroot.service" ]
-          else
-            [ "systemd-tmpfiles-setup.service" ];
-        wantedBy = if forInitrd then [ "initrd-preservation.target" ] else [ "preservation.target" ];
-        before = if forInitrd then [ "initrd-preservation.target" ] else [ "preservation.target" ];
+        unitConfig.DefaultDependencies = "no";
+        conflicts = [ "umount.target" ];
+        wantedBy = if forInitrd then [
+          "initrd-preservation.target"
+        ] else [
+          "preservation.target"
+        ];
+        before = if forInitrd then [
+          # directory mounts are set up before tmpfiles
+          "systemd-tmpfiles-setup-sysroot.service"
+          "initrd-preservation.target"
+        ] else [
+          "systemd-tmpfiles-setup.service"
+          "preservation.target"
+        ];
       }) mountedDirectories;
 
       fileMounts = map (fileConfig: {
