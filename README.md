@@ -11,7 +11,7 @@ Docs are available at <https://willibutz.github.io/preservation>
 
 ## Prerequisites
 
-Depends on <https://github.com/NixOS/nixpkgs/pull/307528> (merged, available on nixos-unstable).
+Requires at least nixos-24.11
 
 ## Why?
 
