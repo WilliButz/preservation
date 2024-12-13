@@ -39,6 +39,59 @@ See [Configuration Options](./configuration-options.md) for all available option
 }
 ```
 
+## Compatibility with systemd's `ConditionFirstBoot`
+
+In this example the machine-id is preserved on the persistent volume via symlink
+instead of a bind-mount. The option `configureParent` causes the parent directory
+of the symlink's target, i.e. `/persistent/etc/` to be created.
+Additionally, `systemd-machine-id-commit.service` is adapted to persist the tmpfs
+mount created by system to the persistent volume.
+
+```nix
+# configuration.nix
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
+  preservation = {
+    enable = true;
+    preserveAt."/persistent" = {
+      files = [
+        # auto-generated machine ID
+        { file = "/etc/machine-id"; inInitrd = true; how = "symlink"; configureParent = true; }
+        # ...
+      ];
+      directories = [
+        # ...
+      ];
+    };
+  };
+
+  # systemd-machine-id-commit.service would fail, but it is not relevant
+  # in this specific setup for a persistent machine-id so we disable it
+  #
+  # see the firstboot example below for an alternative approach
+  systemd.suppressedSystemUnits = [ "systemd-machine-id-commit.service" ];
+
+  # let the service commit the transient ID to the persistent volume
+  systemd.services.systemd-machine-id-commit = {
+    unitConfig.ConditionPathIsMountPoint = [
+      ""
+      "/persistent/etc/machine-id"
+    ];
+    serviceConfig.ExecStart = [
+      ""
+      "systemd-machine-id-setup --commit --root /persistent"
+    ];
+  };
+}
+```
+
+
+
 ## Complex
 
 ```nix

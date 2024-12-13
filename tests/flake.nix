@@ -17,6 +17,7 @@
           {
             checks = {
               default = pkgs.nixosTest (import ./basic.nix pkgs);
+              firstboot = pkgs.nixosTest (import ./firstboot.nix pkgs);
             };
           };
       };
