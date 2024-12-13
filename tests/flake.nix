@@ -2,8 +2,7 @@
   inputs = {
     flake-parts.url = "github:hercules-ci/flake-parts";
 
-    # depends on https://github.com/NixOS/nixpkgs/pull/307528 (merged)
-    nixpkgs.url = "github:nixos/nixpkgs";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
   };
 
   outputs = inputs:

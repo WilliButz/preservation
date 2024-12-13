@@ -29,6 +29,13 @@ See [Configuration Options](./configuration-options.md) for all available option
       ];
     };
   };
+
+  # systemd-machine-id-commit.service would fail, but it is not relevant
+  # in this specific setup for a persistent machine-id so we disable it
+  #
+  # see the firstboot example below for an alternative approach
+  systemd.suppressedSystemUnits = [ "systemd-machine-id-commit.service" ];
+
 }
 ```
 
