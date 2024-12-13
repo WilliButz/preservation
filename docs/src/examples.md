@@ -69,8 +69,8 @@ See [Configuration Options](./configuration-options.md) for all available option
       # preserve system files
       files = [
         { file = "/etc/machine-id"; inInitrd = true; }
-        "/etc/ssh/ssh_host_ed25519_key"
-        "/etc/ssh/ssh_host_rsa_key"
+        { file = "/etc/ssh/ssh_host_rsa_key"; how = "symlink"; configureParent = true; }
+        { file = "/etc/ssh/ssh_host_ed25519_key"; how = "symlink"; configureParent = true; }
         "/var/lib/usbguard/rules.conf"
 
         # creates a symlink on the volatile root
