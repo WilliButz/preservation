@@ -185,7 +185,7 @@ meant to be a drop-in replacement.</p>
 <h2 id="documentation"><a class="header" href="#documentation">Documentation</a></h2>
 <p>Docs are available at <a href="https://willibutz.github.io/preservation">https://willibutz.github.io/preservation</a></p>
 <h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
-<p>Depends on <a href="https://github.com/NixOS/nixpkgs/pull/307528">https://github.com/NixOS/nixpkgs/pull/307528</a> (merged, available on nixos-unstable).</p>
+<p>Requires at least nixos-24.11</p>
 <h2 id="why"><a class="header" href="#why">Why?</a></h2>
 <p>This aims to provide a declarative state management solution for NixOS systems without resorting to
 interpreters to do the heavy lifting. This should enable impermanence-like state management on
@@ -1059,6 +1059,60 @@ string, not containing newlines or colons</p>
       ];
     };
   };
+
+  # systemd-machine-id-commit.service would fail, but it is not relevant
+  # in this specific setup for a persistent machine-id so we disable it
+  #
+  # see the firstboot example below for an alternative approach
+  systemd.suppressedSystemUnits = [ "systemd-machine-id-commit.service" ];
+
+}
+</code></pre>
+<h2 id="compatibility-with-systemds-conditionfirstboot"><a class="header" href="#compatibility-with-systemds-conditionfirstboot">Compatibility with systemd's <code>ConditionFirstBoot</code></a></h2>
+<p>In this example the machine-id is preserved on the persistent volume via symlink
+instead of a bind-mount. The option <code>configureParent</code> causes the parent directory
+of the symlink's target, i.e. <code>/persistent/etc/</code> to be created.
+Additionally, <code>systemd-machine-id-commit.service</code> is adapted to persist the tmpfs
+mount created by system to the persistent volume.</p>
+<pre><code class="language-nix"># configuration.nix
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
+{
+  preservation = {
+    enable = true;
+    preserveAt."/persistent" = {
+      files = [
+        # auto-generated machine ID
+        { file = "/etc/machine-id"; inInitrd = true; how = "symlink"; configureParent = true; }
+        # ...
+      ];
+      directories = [
+        # ...
+      ];
+    };
+  };
+
+  # systemd-machine-id-commit.service would fail, but it is not relevant
+  # in this specific setup for a persistent machine-id so we disable it
+  #
+  # see the firstboot example below for an alternative approach
+  systemd.suppressedSystemUnits = [ "systemd-machine-id-commit.service" ];
+
+  # let the service commit the transient ID to the persistent volume
+  systemd.services.systemd-machine-id-commit = {
+    unitConfig.ConditionPathIsMountPoint = [
+      ""
+      "/persistent/etc/machine-id"
+    ];
+    serviceConfig.ExecStart = [
+      ""
+      "systemd-machine-id-setup --commit --root /persistent"
+    ];
+  };
 }
 </code></pre>
 <h2 id="complex"><a class="header" href="#complex">Complex</a></h2>
@@ -1096,8 +1150,8 @@ string, not containing newlines or colons</p>
       # preserve system files
       files = [
         { file = "/etc/machine-id"; inInitrd = true; }
-        "/etc/ssh/ssh_host_ed25519_key"
-        "/etc/ssh/ssh_host_rsa_key"
+        { file = "/etc/ssh/ssh_host_rsa_key"; how = "symlink"; configureParent = true; }
+        { file = "/etc/ssh/ssh_host_ed25519_key"; how = "symlink"; configureParent = true; }
         "/var/lib/usbguard/rules.conf"
 
         # creates a symlink on the volatile root
